@@ -2,13 +2,13 @@
   "name": "cordova-plugin-local-notifications-db",
   "cordova_name": "Cordova LocalNotification Plugin",
   "version": "0.8.4",
-  "description": "Schedule, trigger and query local notifications on iOS and Android",
+  "description": "Schedules and queries for local notifications",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielalvenstrand/cordova-plugin-local-notifications.git"
+    "url": "git+https://github.com/DavidBriglio/cordova-plugin-local-notifications.git"
   },
   "keywords": [
     "appplant",
@@ -25,7 +25,8 @@
     "android",
     "windows"
   ],
-  "engines": [{
+  "engines": [
+    {
       "name": "cordova",
       "version": ">=3.6.0"
     },
@@ -42,10 +43,10 @@
     "cordova-plugin-device": "*",
     "cordova-plugin-app-event": ">=1.1.0"
   },
-  "author": "Daniel Älvenstrand",
+  "author": "David Briglio",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/katzer/cordova-plugin-local-notifications/issues"
   },
-  "homepage": "https://github.com/danielalvenstrand/cordova-plugin-local-notifications"
+  "homepage": "https://github.com/DavidBriglio/cordova-plugin-local-notifications"
 }

@@ -28,8 +28,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.R;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.Random;
 
@@ -130,6 +133,47 @@ public class Builder {
                 .setOngoing(options.isOngoing())
                 .setColor(options.getColor());
 
+        
+        //Set heads-up
+        if(options.getHeadsUp()) {
+            builder.setPriority(NotificationCompat.PRIORITY_HIGH);
+        }
+        
+        //Enable/Disable vibration
+        if(!options.getVibration()) {
+            builder.setVibrate(new long[]{0, 0});
+        }
+
+
+        //Set style
+        String style = options.getStyle();
+
+        if(style.equals("inbox")) {
+            NotificationCompat.InboxStyle notificationStyle = new NotificationCompat.InboxStyle();
+            JSONObject inbox = options.getInbox();
+            if(inbox != null) {
+                JSONArray lines = inbox.optJSONArray("lines");
+                String summary = inbox.optString("summary", "");
+                String title = inbox.optString("title", "");
+
+                if(title != null && title != "") {
+                    notificationStyle.setBigContentTitle(title);
+                }
+                if(summary != null && summary != "") {
+                    notificationStyle.setSummaryText(summary);
+                }
+                if(lines != null) {
+                    for( int i = 0; i < lines.length(); i++) {
+                        notificationStyle.addLine(lines.optString(i,""));
+                    }
+                }
+            }
+            builder.setStyle(notificationStyle);
+        }
+        else if (style.equals("bigtext")) {
+            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(options.getText()));
+        }
+
         if (ledColor != 0) {
             builder.setLights(ledColor, options.getLedOnTime(), options.getLedOffTime());
         }
@@ -143,6 +187,37 @@ public class Builder {
         } else {
             builder.setSmallIcon(options.getSmallIcon());
             builder.setLargeIcon(options.getIconBitmap());
+        }
+
+        //Add actions to the notification
+
+        JSONArray actions = options.getActions();
+
+        if(actions != null && actions.length() > 0) {
+            for(int i = 0 ; i < actions.length(); i++) {
+                JSONObject actionData = actions.optJSONObject(i);
+
+                String iconStr = actionData.optString("icon");
+                int icon = options.getIconFromString(iconStr);
+
+                String text = actionData.optString("text");
+
+                //Copy options
+                Options tempOptions = new Options(options);
+
+                //Add 'actionClicked' parameter
+                tempOptions.put("actionClicked", actionData);
+
+                Intent intent = new Intent(context, clickActivity)
+                            .putExtra(Options.EXTRA, tempOptions.toString());
+
+                int reqCode = new Random().nextInt();
+
+                PendingIntent actionPi = PendingIntent.getActivity(
+                        context, reqCode, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                builder.addAction(icon, text, actionPi);
+            }
         }
 
         applyDeleteReceiver(builder);

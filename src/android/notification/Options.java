@@ -31,6 +31,7 @@ import android.support.v4.app.NotificationCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.util.Date;
 
@@ -66,6 +67,23 @@ public class Options {
     public Options(Context context){
     	this.context = context;
         this.assets  = AssetUtil.getInstance(context);
+    }
+
+    /**
+     * Constructor that copies an Options object.
+     *
+     * @param originalOptions
+     *      Options to copy.
+     */
+    public Options(Options originalOptions)
+    {
+      this.context = originalOptions.getContext();
+      this.assets  = AssetUtil.getInstance(this.context);
+      try {
+          this.options = new JSONObject(originalOptions.getDict().toString());
+      } catch (JSONException e) {
+          e.printStackTrace();
+      }
     }
 
     /**
@@ -197,6 +215,41 @@ public class Options {
      */
     public Integer getId() {
         return options.optInt("id", 0);
+    }
+
+    /**
+     *  Notification buttons / actions.
+     */
+    public JSONArray getActions() {
+        return options.optJSONArray("actions");
+    }
+    
+    /**
+     *  Boolean to trigger heads-up notification, or normal
+     */
+    public Boolean getHeadsUp() {
+        return options.optBoolean("headsup");
+    }
+    
+    /**
+     *  Vibration enable/disable.
+     */
+     public boolean getVibration() {
+         return options.optBoolean("vibration",true);
+     }
+
+    /**
+     *  String to set the style of the notification.
+     */
+    public String getStyle() {
+        return options.optString("style");
+    }
+    
+    /**
+     *  Inbox object for inbox style notification.
+     */
+    public JSONObject getInbox() {
+        return options.optJSONObject("inbox");
     }
 
     /**
@@ -364,10 +417,29 @@ public class Options {
     }
 
     /**
+     *  Get drawable using a string value.
+     */
+    public int getIconFromString(String iconStr) {
+        return assets.getResIdForDrawable(iconStr);
+    }
+
+    /**
      * JSON object as string.
      */
     public String toString() {
         return options.toString();
+    }
+
+    /**
+     * Add a JSONObject with the given name.
+     */
+    public void put(String name, JSONObject obj)
+    {
+      try {
+          options.putOpt(name, obj);
+      } catch (JSONException e) {
+          e.printStackTrace();
+      }
     }
 
 }

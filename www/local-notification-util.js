@@ -71,6 +71,11 @@ exports.applyPlatformSpecificOptions = function () {
         defaults.ledOnTime = undefined;
         defaults.ledOffTime = undefined;
         defaults.color     = undefined;
+        defaults.headsup   = false;
+        defaults.vibration = true;
+        defaults.style     = 'default';
+        defaults.inbox     = undefined;
+        defaults.actions   = undefined;
         break;
     }
 
